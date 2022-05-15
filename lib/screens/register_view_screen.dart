@@ -1,10 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_app/screens/verify_email_view_screen.dart';
+import 'package:login_app/services/auth/auth_service.dart';
 import '../main.dart';
 import '../screens/login_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
+import '../services/auth/auth_exceptions.dart';
 import '../utilities/show_errod_dialog.dart';
 
 class RegisteViewScreen extends StatefulWidget {
@@ -63,27 +64,23 @@ class _RegisteViewScreenState extends State<RegisteViewScreen> {
               final password = _password.text;
 
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                final userCredential = await AuthService.firebase().createUser(
                   email: email,
                   password: password,
                 );
+
                 devtools.log(userCredential.toString());
-                final user = FirebaseAuth.instance.currentUser;
-                user?.sendEmailVerification();
+                final user = AuthService.firebase().currentUser;
+                await AuthService.firebase().sendEmailVerification();
                 Navigator.pushNamed(context, VerifyEmailViewScreen.routeName);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'email-already-in-use') {
-                  showErrorDialog(context, 'Email is already in use');
-                } else if (e.code == 'weak-password') {
-                  showErrorDialog(context, 'Weak password');
-                } else if (e.code == 'invalid-email') {
-                  showErrorDialog(context, 'Invalid email');
-                } else {
-                  showErrorDialog(context, 'Something else happened');
-                }
-              } catch (e) {
-                showErrorDialog(context, 'Error: ${e.toString()}');
+              } on EmailAlreadyInUseAuthException catch (e) {
+                showErrorDialog(context, 'Email is already in use');
+              } on WeakPasswordAuthException catch (e) {
+                showErrorDialog(context, 'Weak password');
+              } on InvalidEmailAuthException catch (e) {
+                showErrorDialog(context, 'Invalid email');
+              } on GenericAuthException {
+                showErrorDialog(context, 'Error');
               }
             },
             child: const Text('Register'),

@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:login_app/main.dart';
 import 'package:login_app/screens/register_view_screen.dart';
-
-import '../firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginViewScreen extends StatefulWidget {
   static const routeName = '/login_view';
@@ -65,18 +64,23 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
                   email: email,
                   password: password,
                 );
-                print(userCredential);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  NotesViewScreen.routeName,
+                  (route) => false,
+                );
+                devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
-                  print('User not found');
+                  devtools.log('User not found');
                 } else if (e.code == 'wrong-password') {
-                  print('Wrong password');
+                  devtools.log('Wrong password');
                 } else {
-                  print('Something else happened');
+                  devtools.log('Something else happened');
                 }
               }
             },
-            child: Text('Login'),
+            child: const Text('Login'),
           ),
           TextButton(
               onPressed: () {

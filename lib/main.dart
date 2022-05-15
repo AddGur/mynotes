@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         // '/login/' : (context) => const LoginViewScreen(),
         LoginViewScreen.routeName: (context) => const LoginViewScreen(),
         RegisteViewScreen.routeName: (context) => const RegisteViewScreen(),
+        NotesViewScreen.routeName: (context) => const NotesViewScreen(),
       },
     );
   }
@@ -68,6 +69,7 @@ class HomePage extends StatelessWidget {
 enum MenuAction { logout }
 
 class NotesViewScreen extends StatefulWidget {
+  static const routeName = '/notes_view';
   const NotesViewScreen({super.key});
 
   @override
@@ -97,7 +99,7 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
             return const [
               PopupMenuItem<MenuAction>(
                 value: MenuAction.logout,
-                child: const Text('Logout'),
+                child: Text('Logout'),
               ),
             ];
           })

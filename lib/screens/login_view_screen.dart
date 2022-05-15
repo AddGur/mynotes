@@ -72,11 +72,11 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
                 devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
-                  devtools.log('User not found');
+                  showErrorDialog(context, 'User not found');
                 } else if (e.code == 'wrong-password') {
-                  devtools.log('Wrong password');
+                  showErrorDialog(context, 'Wrong credentials');
                 } else {
-                  devtools.log('Something else happened');
+                  showErrorDialog(context, 'Error: ${e.code}');
                 }
               }
             },

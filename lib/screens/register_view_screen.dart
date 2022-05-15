@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_app/main.dart';
 import '../screens/login_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
@@ -67,14 +68,16 @@ class _RegisteViewScreenState extends State<RegisteViewScreen> {
                 devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'email-already-in-use') {
-                  devtools.log('Email is already in use');
+                  showErrorDialog(context, 'Email is already in use');
                 } else if (e.code == 'weak-password') {
-                  devtools.log('Weak password');
+                  showErrorDialog(context, 'Weak password');
                 } else if (e.code == 'invalid-email') {
-                  devtools.log('Invalid email');
+                  showErrorDialog(context, 'Invalid email');
                 } else {
-                  devtools.log('Something else happened');
+                  showErrorDialog(context, 'Something else happened');
                 }
+              } catch (e) {
+                showErrorDialog(context, 'Error: ${e.toString()}');
               }
             },
             child: const Text('Register'),

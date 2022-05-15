@@ -110,6 +110,24 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
   }
 }
 
+Future<void> showErrorDialog(BuildContext context, String text) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('An error occurred'),
+          content: Text(text),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Ok'))
+          ],
+        );
+      });
+}
+
 Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog<bool>(
     context: context,

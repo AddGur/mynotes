@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login_app/main.dart';
-import 'package:login_app/screens/register_view_screen.dart';
+import '../main.dart';
+import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
+
+import '../utilities/show_errod_dialog.dart';
 
 class LoginViewScreen extends StatefulWidget {
   static const routeName = '/login_view';
@@ -78,6 +80,8 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
                 } else {
                   showErrorDialog(context, 'Error: ${e.code}');
                 }
+              } catch (e) {
+                showErrorDialog(context, 'Error: ${e.toString()}');
               }
             },
             child: const Text('Login'),

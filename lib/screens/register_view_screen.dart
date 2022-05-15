@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:login_app/main.dart';
+import 'package:login_app/screens/verify_email_view_screen.dart';
+import '../main.dart';
 import '../screens/login_view_screen.dart';
 import 'dart:developer' as devtools show log;
+
+import '../utilities/show_errod_dialog.dart';
 
 class RegisteViewScreen extends StatefulWidget {
   static const routeName = '/register_view';
@@ -66,6 +69,9 @@ class _RegisteViewScreenState extends State<RegisteViewScreen> {
                   password: password,
                 );
                 devtools.log(userCredential.toString());
+                final user = FirebaseAuth.instance.currentUser;
+                user?.sendEmailVerification();
+                Navigator.pushNamed(context, VerifyEmailViewScreen.routeName);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'email-already-in-use') {
                   showErrorDialog(context, 'Email is already in use');

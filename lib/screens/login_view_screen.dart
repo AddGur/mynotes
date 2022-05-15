@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_app/screens/verify_email_view_screen.dart';
 import '../main.dart';
 import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
@@ -66,11 +67,20 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
                   email: email,
                   password: password,
                 );
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  NotesViewScreen.routeName,
-                  (route) => false,
-                );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user?.emailVerified ?? false) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    NotesViewScreen.routeName,
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushNamed(
+                    context,
+                    VerifyEmailViewScreen.routeName,
+                  );
+                }
+
                 devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {

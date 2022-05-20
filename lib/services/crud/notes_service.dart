@@ -129,23 +129,23 @@ class NotesService {
     }
   }
 
-  Future<DatabaseNote> createNote({required DatabaseUser onwer}) async {
+  Future<DatabaseNote> createNote({required DatabaseUser owner}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     // make sure owner exists in the database with the correct id
-    final dbUser = await getUser(email: onwer.email);
+    final dbUser = await getUser(email: owner.email);
 
-    if (dbUser != onwer) {
+    if (dbUser != owner) {
       throw CouldNotFindUser();
     }
 
     const text = '';
     //create the note
     final noteId = await db.insert(noteTable,
-        {userIdColumn: onwer.id, textColumn: text, isSyncedWithCloudColumn: 1});
+        {userIdColumn: owner.id, textColumn: text, isSyncedWithCloudColumn: 1});
     final note = DatabaseNote(
-        id: noteId, userId: onwer.id, text: text, isSyncedWithCloud: true);
+        id: noteId, userId: owner.id, text: text, isSyncedWithCloud: true);
 
     _notes.add(note);
     _notesStreamCOntroller.add(_notes);

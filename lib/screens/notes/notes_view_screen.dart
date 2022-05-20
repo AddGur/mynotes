@@ -27,12 +27,6 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
   }
 
   @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -75,7 +69,27 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                         case ConnectionState.active:
-                          return const Text('Waiting for all notes...');
+                          if (snapshot.hasData) {
+                            final allNotes =
+                                snapshot.data as List<DatabaseNote>;
+                            print(allNotes);
+                            return ListView.builder(
+                              itemBuilder: (context, index) {
+                                final note = allNotes[index];
+                                return ListTile(
+                                  title: Text(
+                                    note.text,
+                                    maxLines: 1,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              },
+                              itemCount: allNotes.length,
+                            );
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
                         default:
                           return const CircularProgressIndicator();
                       }

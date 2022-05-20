@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:login_app/screens/notes/new_note_view_screen.dart';
 import 'package:login_app/services/auth/auth_service.dart';
 import 'package:login_app/services/crud/notes_service.dart';
 
-import '../enums/menu_action.dart';
-import 'login_view_screen.dart';
+import '../../enums/menu_action.dart';
+import '../login_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
 class NotesViewScreen extends StatefulWidget {
@@ -35,8 +36,12 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main UI'),
+        title: const Text('Your Notes'),
         actions: [
+          IconButton(
+              onPressed: (() =>
+                  Navigator.pushNamed(context, NewNoteViewScreen.routeName)),
+              icon: const Icon(Icons.add)),
           PopupMenuButton<MenuAction>(onSelected: (value) async {
             switch (value) {
               case MenuAction.logout:

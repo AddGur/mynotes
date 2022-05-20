@@ -1,4 +1,4 @@
-class DatabaseAleradyOpenExceotpion implements Exception {}
+class DatabaseAleradyOpenException implements Exception {}
 
 class UnableToGetDocumentsDirectiory implements Exception {}
 

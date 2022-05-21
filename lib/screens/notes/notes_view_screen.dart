@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_app/screens/notes/new_note_view_screen.dart';
+import 'package:login_app/screens/notes/create_update_note_view_screen.dart';
 import 'package:login_app/screens/notes/notes_list_view_screen.dart';
 import 'package:login_app/services/auth/auth_service.dart';
 import 'package:login_app/services/crud/notes_service.dart';
@@ -35,8 +35,8 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
         title: const Text('Your Notes'),
         actions: [
           IconButton(
-              onPressed: (() =>
-                  Navigator.pushNamed(context, NewNoteViewScreen.routeName)),
+              onPressed: (() => Navigator.pushNamed(
+                  context, CreateUpdateNoteViewScreen.routeName)),
               icon: const Icon(Icons.add)),
           PopupMenuButton<MenuAction>(onSelected: (value) async {
             switch (value) {
@@ -54,7 +54,7 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
             return const [
               PopupMenuItem<MenuAction>(
                 value: MenuAction.logout,
-                child: Text('Logout'),
+                child: Text('Log out'),
               ),
             ];
           })
@@ -76,6 +76,11 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
                                 snapshot.data as List<DatabaseNote>;
                             print(allNotes);
                             return NotesListViewScreen(
+                                onTap: (note) {
+                                  Navigator.pushNamed(context,
+                                      CreateUpdateNoteViewScreen.routeName,
+                                      arguments: note);
+                                },
                                 notes: allNotes,
                                 onDeleteNote: (note) async {
                                   await _notesService.deleteNote(id: note.id);

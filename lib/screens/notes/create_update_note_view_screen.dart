@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:login_app/services/auth/auth_service.dart';
 import 'package:login_app/services/crud/notes_service.dart';
+import 'package:login_app/utilities/generics/get_arguments.dart';
 
-class NewNoteViewScreen extends StatefulWidget {
-  static const routeName = '/new_note_view';
-  const NewNoteViewScreen({super.key});
+class CreateUpdateNoteViewScreen extends StatefulWidget {
+  static const routeName = '/create_update_note_view';
+  const CreateUpdateNoteViewScreen({super.key});
 
   @override
-  State<NewNoteViewScreen> createState() => _NewNoteViewScreenState();
+  State<CreateUpdateNoteViewScreen> createState() =>
+      _CreateUpdateNoteViewScreenState();
 }
 
-class _NewNoteViewScreenState extends State<NewNoteViewScreen> {
+class _CreateUpdateNoteViewScreenState
+    extends State<CreateUpdateNoteViewScreen> {
   DatabaseNote? _note;
   late final NotesService _notesService;
   late final TextEditingController _textController;
@@ -22,7 +25,15 @@ class _NewNoteViewScreenState extends State<NewNoteViewScreen> {
     super.initState();
   }
 
-  Future<DatabaseNote> createNewNote() async {
+  Future<DatabaseNote> createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = context.getArgument<DatabaseNote>();
+
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      return widgetNote;
+    }
+
     final existingNote = _note;
     if (existingNote != null) {
       return existingNote;
@@ -30,7 +41,9 @@ class _NewNoteViewScreenState extends State<NewNoteViewScreen> {
     final currentUser = AuthService.firebase().currentUser!;
     final email = currentUser.email!;
     final owner = await _notesService.getUser(email: email);
-    return await _notesService.createNote(owner: owner);
+    final newNote = await _notesService.createNote(owner: owner);
+    _note = newNote;
+    return newNote;
   }
 
   void _deleteNoteIfTextIsEmpty() {
@@ -81,11 +94,10 @@ class _NewNoteViewScreenState extends State<NewNoteViewScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('New Note')),
       body: FutureBuilder<DatabaseNote>(
-        future: createNewNote(),
+        future: createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _note = snapshot.data as DatabaseNote;
               _setupTextControllerListener();
               return TextField(
                 controller: _textController,

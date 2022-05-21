@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login_app/screens/verify_email_view_screen.dart';
-import 'package:login_app/services/auth/auth_service.dart';
-import '../main.dart';
+import '../screens/verify_email_view_screen.dart';
+import '../services/auth/auth_service.dart';
 import '../screens/login_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
 import '../services/auth/auth_exceptions.dart';
-import '../utilities/show_errod_dialog.dart';
+import '../utilities/dialogs/error_dialog.dart';
 
 class RegisteViewScreen extends StatefulWidget {
   static const routeName = '/register_view';

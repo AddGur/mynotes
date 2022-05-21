@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:login_app/screens/notes/new_note_view_screen.dart';
+import 'package:login_app/screens/notes/notes_list_view_screen.dart';
 import 'package:login_app/services/auth/auth_service.dart';
 import 'package:login_app/services/crud/notes_service.dart';
 
 import '../../enums/menu_action.dart';
+import '../../utilities/dialogs/logout_dialog.dart';
 import '../login_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
@@ -73,20 +75,11 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
                             final allNotes =
                                 snapshot.data as List<DatabaseNote>;
                             print(allNotes);
-                            return ListView.builder(
-                              itemBuilder: (context, index) {
-                                final note = allNotes[index];
-                                return ListTile(
-                                  title: Text(
-                                    note.text,
-                                    maxLines: 1,
-                                    softWrap: true,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              },
-                              itemCount: allNotes.length,
-                            );
+                            return NotesListViewScreen(
+                                notes: allNotes,
+                                onDeleteNote: (note) async {
+                                  await _notesService.deleteNote(id: note.id);
+                                });
                           } else {
                             return const CircularProgressIndicator();
                           }
@@ -100,28 +93,4 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
           }),
     );
   }
-}
-
-Future<bool> showLogOutDialog(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Sign out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              child: const Text('Cancel')),
-          TextButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: const Text('Log out')),
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
 }

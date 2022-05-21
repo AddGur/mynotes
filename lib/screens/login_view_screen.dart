@@ -7,7 +7,7 @@ import '../main.dart';
 import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
-import '../utilities/show_errod_dialog.dart';
+import '../utilities/dialogs/error_dialog.dart';
 
 class LoginViewScreen extends StatefulWidget {
   static const routeName = '/login_view';

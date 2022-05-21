@@ -3,6 +3,9 @@ import 'package:login_app/services/auth/auth_service.dart';
 import 'package:login_app/services/cloud/cloud_note.dart';
 import 'package:login_app/services/cloud/firebase_cloud_storage.dart';
 import 'package:login_app/utilities/generics/get_arguments.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../utilities/dialogs/cannot_share_empty_note_dialog.dart';
 
 class CreateUpdateNoteViewScreen extends StatefulWidget {
   static const routeName = '/create_update_note_view';
@@ -105,7 +108,21 @@ class _CreateUpdateNoteViewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New Note')),
+      appBar: AppBar(
+        title: const Text('New Note'),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                final text = _textController.text;
+                if (_note == null || text.isEmpty) {
+                  await showCannotShareEmptyNoteDialog(context);
+                } else {
+                  Share.share(text);
+                }
+              },
+              icon: Icon(Icons.share))
+        ],
+      ),
       // body: FutureBuilder<DatabaseNote>(
       body: FutureBuilder<CloudNote>(
         future: createOrGetExistingNote(context),

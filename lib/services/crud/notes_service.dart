@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:login_app/extensions/list/filter.dart';
 import 'package:path/path.dart' show join;
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,31 +14,48 @@ class NotesService {
 
   List<DatabaseNote> _notes = [];
 
+  DatabaseUser? _user;
+
   static final NotesService _shared = NotesService._sharedInstance();
   NotesService._sharedInstance() {
-    _notesStreamCOntroller =
+    _notesStreamController =
         StreamController<List<DatabaseNote>>.broadcast(onListen: () {
-      _notesStreamCOntroller.sink.add(_notes);
+      _notesStreamController.sink.add(_notes);
     });
   }
   factory NotesService() => _shared;
 
-  late final StreamController<List<DatabaseNote>> _notesStreamCOntroller;
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
-  Stream<List<DatabaseNote>> get allNotes => _notesStreamCOntroller.stream;
+  Stream<List<DatabaseNote>> get allNotes =>
+      _notesStreamController.stream.filter((note) {
+        final currentUser = _user;
+        if (currentUser != null) {
+          return note.userId == currentUser.id;
+        } else {
+          throw UserShouldBeSetBeforeReadingAllNotes();
+        }
+      });
 
   Future<void> _cacheNotes() async {
     final allNotes = await getAllNotes();
     _notes = allNotes.toList();
-    _notesStreamCOntroller.add(_notes);
+    _notesStreamController.add(_notes);
   }
 
-  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+  Future<DatabaseUser> getOrCreateUser(
+      {required String email, bool setAsCurrentUser = true}) async {
     try {
       final user = await getUser(email: email);
+      if (setAsCurrentUser) {
+        _user = user;
+      }
       return user;
     } on CouldNotFindUser {
       final createdUser = await createUser(email: email);
+      if (setAsCurrentUser) {
+        _user = createdUser;
+      }
       return createdUser;
     } catch (e) {
       rethrow;
@@ -152,7 +170,7 @@ class NotesService {
         id: noteId, userId: owner.id, text: text, isSyncedWithCloud: true);
 
     _notes.add(note);
-    _notesStreamCOntroller.add(_notes);
+    _notesStreamController.add(_notes);
     return note;
   }
 
@@ -165,7 +183,7 @@ class NotesService {
       throw CouldNotDeleteNote();
     } else {
       _notes.removeWhere((element) => element.id == id);
-      _notesStreamCOntroller.add(_notes);
+      _notesStreamController.add(_notes);
     }
   }
 
@@ -173,7 +191,7 @@ class NotesService {
     final db = _getDatabaseOrThrow();
     final numerOfDeletions = await db.delete(noteTable);
     _notes = [];
-    _notesStreamCOntroller.add(_notes);
+    _notesStreamController.add(_notes);
     return numerOfDeletions;
   }
 
@@ -188,7 +206,7 @@ class NotesService {
       final note = DatabaseNote.fromRow(notes.first);
       _notes.removeWhere((note) => note.id == id);
       _notes.add(note);
-      _notesStreamCOntroller.add(_notes);
+      _notesStreamController.add(_notes);
 
       return note;
     }
@@ -210,8 +228,14 @@ class NotesService {
     await getNote(id: note.id);
 
     //update DB
-    final updatesCount = await db
-        .update(noteTable, {textColumn: text, isSyncedWithCloudColumn: 0});
+    final updatesCount = await db.update(
+        noteTable,
+        {
+          textColumn: text,
+          isSyncedWithCloudColumn: 0,
+        },
+        where: 'id = ?',
+        whereArgs: [note.id]);
 
     if (updatesCount == 0) {
       throw CouldNotUpdateNote();
@@ -219,7 +243,7 @@ class NotesService {
       final updatedNote = await getNote(id: note.id);
       _notes.removeWhere((note) => note.id == updatedNote.id);
       _notes.add(updatedNote);
-      _notesStreamCOntroller.add(_notes);
+      _notesStreamController.add(_notes);
       return updatedNote;
     }
   }

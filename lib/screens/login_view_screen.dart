@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:login_app/services/auth/auth_exceptions.dart';
 import 'package:login_app/services/auth/bloc/auth_bloc.dart';
 import 'package:login_app/services/auth/bloc/auth_event.dart';
+import 'package:login_app/services/auth/bloc/auth_state.dart';
 import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
@@ -58,11 +59,22 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
             decoration:
                 const InputDecoration(hintText: 'Enter your password here'),
           ),
-          TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if (state is AuthStateLoggedOut) {
+                if (state.exception is UserNotFoundAuthException ||
+                    state.exception is WeakPasswordAuthException) {
+                  await showErrorDialog(context, 'Wrong Crednetials');
+                } else if (state.exception is GenericAuthException) {
+                  await showErrorDialog(context, 'Authentiaction error');
+                }
+              }
+            },
+            child: TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                //       try {
                 context.read<AuthBloc>().add(AuthEventLogIn(email, password));
                 // CONVERTING DO BLOC
                 // final userCredential = await AuthService.firebase().logIn(
@@ -84,15 +96,17 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
                 //}
 
                 // devtools.log(userCredential.toString());
-              } on UserNotFoundAuthException catch (e) {
-                showErrorDialog(context, 'User not found');
-              } on WrongPasswordAuthException catch (e) {
-                showErrorDialog(context, 'Wrong credentials');
-              } on GenericAuthException {
-                showErrorDialog(context, 'Error');
-              }
-            },
-            child: const Text('Login'),
+                // } on UserNotFoundAuthException catch (e) {
+                //   showErrorDialog(context, 'User not found');
+                // } on WrongPasswordAuthException catch (e) {
+                //   showErrorDialog(context, 'Wrong credentials');
+                // } on GenericAuthException {
+                //   showErrorDialog(context, 'Error');
+                //   }
+                //  },
+              },
+              child: const Text('Login'),
+            ),
           ),
           TextButton(
               onPressed: () {

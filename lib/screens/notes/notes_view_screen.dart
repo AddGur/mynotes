@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:login_app/screens/notes/create_update_note_view_screen.dart';
 import 'package:login_app/screens/notes/notes_list_view_screen.dart';
 import 'package:login_app/services/auth/auth_service.dart';
+import 'package:login_app/services/auth/bloc/auth_bloc.dart';
+import 'package:login_app/services/auth/bloc/auth_event.dart';
 import 'package:login_app/services/cloud/cloud_note.dart';
 import 'package:login_app/services/cloud/firebase_cloud_storage.dart';
 import 'package:login_app/services/crud/notes_service.dart';
@@ -50,9 +53,11 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
                 final shouldLogut = await showLogOutDialog(context);
                 devtools.log(shouldLogut.toString());
                 if (shouldLogut) {
-                  await AuthService.firebase().logOut();
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, LoginViewScreen.routeName, (route) => false);
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                  // convert to BLOC
+                  //   await AuthService.firebase().logOut();
+                  //   Navigator.pushNamedAndRemoveUntil(
+                  //       context, LoginViewScreen.routeName, (route) => false);
                 }
                 break;
             }

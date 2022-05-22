@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login_app/screens/notes/notes_view_screen.dart';
-import 'package:login_app/screens/verify_email_view_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:login_app/services/auth/auth_exceptions.dart';
-import 'package:login_app/services/auth/auth_service.dart';
-import '../main.dart';
+import 'package:login_app/services/auth/bloc/auth_bloc.dart';
+import 'package:login_app/services/auth/bloc/auth_event.dart';
 import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
 
@@ -64,25 +63,27 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredential = await AuthService.firebase().logIn(
-                  email: email,
-                  password: password,
-                );
-                final user = AuthService.firebase().currentUser;
-                if (user?.isEmailVerified ?? false) {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    NotesViewScreen.routeName,
-                    (route) => false,
-                  );
-                } else {
-                  Navigator.pushNamed(
-                    context,
-                    VerifyEmailViewScreen.routeName,
-                  );
-                }
+                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
+                // CONVERTING DO BLOC
+                // final userCredential = await AuthService.firebase().logIn(
+                //   email: email,
+                //   password: password,
+                // );
+                // final user = AuthService.firebase().currentUser;
+                // if (user?.isEmailVerified ?? false) {
+                //   Navigator.pushNamedAndRemoveUntil(
+                //     context,
+                //     NotesViewScreen.routeName,
+                //     (route) => false,
+                //   );
+                // } else {
+                //   Navigator.pushNamed(
+                //     context,
+                //     VerifyEmailViewScreen.routeName,
+                //   );
+                //}
 
-                devtools.log(userCredential.toString());
+                // devtools.log(userCredential.toString());
               } on UserNotFoundAuthException catch (e) {
                 showErrorDialog(context, 'User not found');
               } on WrongPasswordAuthException catch (e) {

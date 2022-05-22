@@ -32,13 +32,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         // '/login/' : (context) => const LoginViewScreen(),
-        LoginViewScreen.routeName: (context) => const LoginViewScreen(),
-        RegisteViewScreen.routeName: (context) => const RegisteViewScreen(),
-        NotesViewScreen.routeName: (context) => const NotesViewScreen(),
+        // LoginViewScreen.routeName: (context) => const LoginViewScreen(),
+        // RegisteViewScreen.routeName: (context) => const RegisteViewScreen(),
+        // NotesViewScreen.routeName: (context) => const NotesViewScreen(),
         CreateUpdateNoteViewScreen.routeName: (context) =>
             const CreateUpdateNoteViewScreen(),
-        VerifyEmailViewScreen.routeName: (context) =>
-            const VerifyEmailViewScreen(),
+        // VerifyEmailViewScreen.routeName: (context) =>
+        //     const VerifyEmailViewScreen(),
       },
     );
   }
@@ -57,6 +57,8 @@ class HomePage extends StatelessWidget {
         return const VerifyEmailViewScreen();
       } else if (state is AuthStateLoggedOut) {
         return const LoginViewScreen();
+      } else if (state is AuthStateRegistering) {
+        return const RegisteViewScreen();
       } else {
         return const Scaffold(
           body: CircularProgressIndicator(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:login_app/helpers/loading/loading_screen.dart';
+import 'package:login_app/screens/forgot_password_view_screen.dart';
 import 'package:login_app/screens/notes/create_update_note_view_screen.dart';
 import 'package:login_app/screens/notes/notes_view_screen.dart';
 import 'package:login_app/services/auth/bloc/auth_bloc.dart';
@@ -69,6 +70,8 @@ class HomePage extends StatelessWidget {
         return const LoginViewScreen();
       } else if (state is AuthStateRegistering) {
         return const RegisteViewScreen();
+      } else if (state is AuthStateForgotPassword) {
+        return const ForgotPasswordViewScreen();
       } else {
         return const Scaffold(
           body: CircularProgressIndicator(),

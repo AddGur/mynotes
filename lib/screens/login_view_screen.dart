@@ -21,7 +21,7 @@ class LoginViewScreen extends StatefulWidget {
 class _LoginViewScreenState extends State<LoginViewScreen> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  CloseDialog? _closeDialogHandle;
+  // CloseDialog? _closeDialogHandle;
 
   @override
   void initState() {
@@ -42,14 +42,14 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialog = _closeDialogHandle;
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandle = null;
-          } else if (state.isLoading && closeDialog == null) {
-            _closeDialogHandle =
-                showLoadingDialog(context: context, text: 'Loading...');
-          }
+          //   final closeDialog = _closeDialogHandle;
+          //   if (!state.isLoading && closeDialog != null) {
+          //     closeDialog();
+          //     _closeDialogHandle = null;
+          //   } else if (state.isLoading && closeDialog == null) {
+          //     _closeDialogHandle =
+          //         showLoadingDialog(context: context, text: 'Loading...');
+          //   }
 
           if (state.exception is UserNotFoundAuthException ||
               state.exception is WeakPasswordAuthException) {
@@ -63,69 +63,85 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
         appBar: AppBar(
           title: const Text('Login'),
         ),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your email here'),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your password here'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                //       try {
-                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
-                // CONVERTING DO BLOC
-                // final userCredential = await AuthService.firebase().logIn(
-                //   email: email,
-                //   password: password,
-                // );
-                // final user = AuthService.firebase().currentUser;
-                // if (user?.isEmailVerified ?? false) {
-                //   Navigator.pushNamedAndRemoveUntil(
-                //     context,
-                //     NotesViewScreen.routeName,
-                //     (route) => false,
-                //   );
-                // } else {
-                //   Navigator.pushNamed(
-                //     context,
-                //     VerifyEmailViewScreen.routeName,
-                //   );
-                //}
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                  'Please log in to your account in order to interat with and acreate notes!'),
+              TextField(
+                controller: _email,
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your email here'),
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your password here'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  //       try {
+                  context.read<AuthBloc>().add(AuthEventLogIn(email, password));
+                  // CONVERTING DO BLOC
+                  // final userCredential = await AuthService.firebase().logIn(
+                  //   email: email,
+                  //   password: password,
+                  // );
+                  // final user = AuthService.firebase().currentUser;
+                  // if (user?.isEmailVerified ?? false) {
+                  //   Navigator.pushNamedAndRemoveUntil(
+                  //     context,
+                  //     NotesViewScreen.routeName,
+                  //     (route) => false,
+                  //   );
+                  // } else {
+                  //   Navigator.pushNamed(
+                  //     context,
+                  //     VerifyEmailViewScreen.routeName,
+                  //   );
+                  //}
 
-                // devtools.log(userCredential.toString());
-                // } on UserNotFoundAuthException catch (e) {
-                //   showErrorDialog(context, 'User not found');
-                // } on WrongPasswordAuthException catch (e) {
-                //   showErrorDialog(context, 'Wrong credentials');
-                // } on GenericAuthException {
-                //   showErrorDialog(context, 'Error');
-                //   }
-                //  },
-              },
-              child: const Text('Login'),
-            ),
-            TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
-                  // Navigator.pushNamedAndRemoveUntil(
-                  //     context, RegisteViewScreen.routeName, (route) => false);
+                  // devtools.log(userCredential.toString());
+                  // } on UserNotFoundAuthException catch (e) {
+                  //   showErrorDialog(context, 'User not found');
+                  // } on WrongPasswordAuthException catch (e) {
+                  //   showErrorDialog(context, 'Wrong credentials');
+                  // } on GenericAuthException {
+                  //   showErrorDialog(context, 'Error');
+                  //   }
+                  //  },
                 },
-                child: const Text('Not registered yet? Register here!'))
-          ],
+                child: const Text('Login'),
+              ),
+              TextButton(
+                  onPressed: () {
+                    context
+                        .read<AuthBloc>()
+                        .add(const AuthEventShouldRegister());
+                    // Navigator.pushNamedAndRemoveUntil(
+                    //     context, RegisteViewScreen.routeName, (route) => false);
+                  },
+                  child: const Text('Not registered yet? Register here!')),
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventForgotPassword(),
+                        );
+                    // Navigator.pushNamedAndRemoveUntil(
+                    //     context, RegisteViewScreen.routeName, (route) => false);
+                  },
+                  child: const Text('I forgot my password'))
+            ],
+          ),
         ),
       ),
     );

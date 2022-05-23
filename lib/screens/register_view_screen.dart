@@ -57,62 +57,74 @@ class _RegisteViewScreenState extends State<RegisteViewScreen> {
         appBar: AppBar(
           title: const Text('Register'),
         ),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your email here'),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your password here'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                context
-                    .read<AuthBloc>()
-                    .add(AuthEventRegister(email, password));
-                // try {
-                //   final userCredential =
-                //       await AuthService.firebase().createUser(
-                //     email: email,
-                //     password: password,
-                //   );
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Enter your email and password to see youre notes!'),
+              TextField(
+                controller: _email,
+                enableSuggestions: false,
+                autocorrect: false,
+                autofocus: true,
+                keyboardType: TextInputType.emailAddress,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your email here'),
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration:
+                    const InputDecoration(hintText: 'Enter your password here'),
+              ),
+              Center(
+                child: Column(
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        final email = _email.text;
+                        final password = _password.text;
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthEventRegister(email, password));
+                        // try {
+                        //   final userCredential =
+                        //       await AuthService.firebase().createUser(
+                        //     email: email,
+                        //     password: password,
+                        //   );
 
-                //   devtools.log(userCredential.toString());
-                //   final user = AuthService.firebase().currentUser;
-                //   await AuthService.firebase().sendEmailVerification();
-                //   Navigator.pushNamed(context, VerifyEmailViewScreen.routeName);
-                // } on EmailAlreadyInUseAuthException catch (e) {
-                //   showErrorDialog(context, 'Email is already in use');
-                // } on WeakPasswordAuthException catch (e) {
-                //   showErrorDialog(context, 'Weak password');
-                // } on InvalidEmailAuthException catch (e) {
-                //   showErrorDialog(context, 'Invalid email');
-                // } on GenericAuthException {
-                //   showErrorDialog(context, 'Error');
-                // }
-              },
-              child: const Text('Register'),
-            ),
-            TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventLogOut());
-                  // Navigator.pushNamedAndRemoveUntil(
-                  //     context, LoginViewScreen.routeName, (route) => false);
-                },
-                child: const Text('Already registered? Login here!'))
-          ],
+                        //   devtools.log(userCredential.toString());
+                        //   final user = AuthService.firebase().currentUser;
+                        //   await AuthService.firebase().sendEmailVerification();
+                        //   Navigator.pushNamed(context, VerifyEmailViewScreen.routeName);
+                        // } on EmailAlreadyInUseAuthException catch (e) {
+                        //   showErrorDialog(context, 'Email is already in use');
+                        // } on WeakPasswordAuthException catch (e) {
+                        //   showErrorDialog(context, 'Weak password');
+                        // } on InvalidEmailAuthException catch (e) {
+                        //   showErrorDialog(context, 'Invalid email');
+                        // } on GenericAuthException {
+                        //   showErrorDialog(context, 'Error');
+                        // }
+                      },
+                      child: const Text('Register'),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(const AuthEventLogOut());
+                          // Navigator.pushNamedAndRemoveUntil(
+                          //     context, LoginViewScreen.routeName, (route) => false);
+                        },
+                        child: const Text('Already registered? Login here!'))
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

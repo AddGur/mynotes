@@ -30,7 +30,14 @@ class _VerifyEmailViewScreenState extends State<VerifyEmailViewScreen> {
               // final user = AuthService.firebase().currentUser;
               // await AuthService.firebase().sendEmailVerification();
             },
-            child: const Text('Send email verification'))
+            child: const Text('Send email verification')),
+        TextButton(
+            onPressed: () async {
+              context.read<AuthBloc>().add(const AuthEventLogOut());
+              // final user = AuthService.firebase().currentUser;
+              // await AuthService.firebase().sendEmailVerification();
+            },
+            child: const Text('Restart'))
       ]),
     );
   }

@@ -1,0 +1,13 @@
+{
+    "my_title": "My title goes here (PL)",
+
+    "notes_title": "{count, plural, =0{Brak notatek} =1{1 notatka} =2{2 notatki} =3{3 notatki} =4{4 notatki} other{{count} notatek}}",
+    "@notes_title": {
+        "placeholders": {
+            "count":{
+                "type": "int",
+                "example": "3 notatki"
+            }
+        }
+    }
+}

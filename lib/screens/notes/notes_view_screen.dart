@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:login_app/extensions/buildcontext/loc.dart';
 import 'package:login_app/screens/notes/create_update_note_view_screen.dart';
 import 'package:login_app/screens/notes/notes_list_view_screen.dart';
 import 'package:login_app/services/auth/auth_service.dart';
@@ -13,6 +14,10 @@ import '../../enums/menu_action.dart';
 import '../../utilities/dialogs/logout_dialog.dart';
 import '../login_view_screen.dart';
 import 'dart:developer' as devtools show log;
+
+extension Count<T extends Iterable> on Stream {
+  Stream<int> get getLength => map((event) => event.length);
+}
 
 class NotesViewScreen extends StatefulWidget {
   static const routeName = '/notes_view';
@@ -41,7 +46,17 @@ class _NotesViewScreenState extends State<NotesViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Notes'),
+        title: StreamBuilder(
+            stream: _notesService.allNotes(onwerUserId: userId).getLength,
+            builder: (context, AsyncSnapshot<int> snapshot) {
+              if (snapshot.hasData) {
+                final noteCount = snapshot.data ?? 0;
+                final text = context.loc.notes_title(noteCount);
+                return Text(text);
+              } else {
+                return const Text('');
+              }
+            }),
         actions: [
           IconButton(
               onPressed: (() => Navigator.pushNamed(

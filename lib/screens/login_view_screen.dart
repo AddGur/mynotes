@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:login_app/extensions/buildcontext/loc.dart';
 import 'package:login_app/services/auth/auth_exceptions.dart';
 import 'package:login_app/services/auth/bloc/auth_bloc.dart';
 import 'package:login_app/services/auth/bloc/auth_event.dart';
@@ -7,6 +8,7 @@ import 'package:login_app/services/auth/bloc/auth_state.dart';
 import 'package:login_app/utilities/dialogs/loading_dialog.dart';
 import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utilities/dialogs/error_dialog.dart';
 
@@ -61,7 +63,11 @@ class _LoginViewScreenState extends State<LoginViewScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          //    title: Text(AppLocalizations.of(context)!.my_title),
+          // after adding loc.dart it's looks like:
+          title: Text(context.loc.my_title),
+
+          //  title: const Text('Login'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

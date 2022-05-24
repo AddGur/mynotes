@@ -12,6 +12,7 @@ import '../screens/verify_email_view_screen.dart';
 import '../screens/login_view_screen.dart';
 import '../screens/register_view_screen.dart';
 import 'dart:developer' as devtools show log;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
